@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="./img/favicon.ico">
+
+	<title>L-Api</title>
+
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="./css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href=".">L-Api</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#l-api">L-Api</a></li>
+        
+            <li><a href="#overview">Overview</a></li>
+        
+            <li><a href="#entities">Entities</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="l-api">L-Api</h1>
+<p>A specification for a well rounded web service.</p>
+<h2 id="overview">Overview</h2>
+<p>An l-api compliant web service provides a few key features that address the downsides of other alternatives such as REST, RPC and SOAP.</p>
+<ul>
+<li>documentation built in</li>
+<li>entities separate from actions</li>
+<li>a deep and flexible way of getting only the data we need</li>
+<li>minimal cruft</li>
+</ul>
+<p>The structure of an l-api web service is made up of two distinct parts, entities and actions.</p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/entities</td>
+<td>GET</td>
+<td>List the various entities available in the system</td>
+</tr>
+<tr>
+<td>/entities/{type}</td>
+<td>GET</td>
+<td>Describe the entity in detail. This will include field names, related entities and other info.</td>
+</tr>
+<tr>
+<td>/entities/{type}</td>
+<td>PUT</td>
+<td>Creates a new entity</td>
+</tr>
+<tr>
+<td>/entities/{type}</td>
+<td>POST</td>
+<td>Queries the data starting at the entity type</td>
+</tr>
+<tr>
+<td>/id/{id}</td>
+<td>GET</td>
+<td>This is the same as calling GET /entities/{type}</td>
+</tr>
+<tr>
+<td>/id/{id}</td>
+<td>POST</td>
+<td>Query the required fields and related entities</td>
+</tr>
+<tr>
+<td>/id/{id}</td>
+<td>PATCH</td>
+<td>Patch the data. If a field is not supplied it will not get updated</td>
+</tr>
+<tr>
+<td>/id/{id}</td>
+<td>UPDATE</td>
+<td>Update the data. The entity will be updated to the data passed in</td>
+</tr>
+<tr>
+<td>/id/{id}</td>
+<td>DELETE</td>
+<td>Deletes the entity</td>
+</tr>
+<tr>
+<td>/actions/</td>
+<td>GET</td>
+<td>Lists the services available</td>
+</tr>
+<tr>
+<td>/actions/{type}</td>
+<td>GET</td>
+<td>Gets the details of the actions available for the type</td>
+</tr>
+<tr>
+<td>/actions/{type}/{action}</td>
+<td>POST</td>
+<td>Performs the action</td>
+</tr>
+</tbody>
+</table>
+<h2 id="entities">Entities</h2>
+<p>Entities are best compared to the RESTful web services you're used to. They should be thought of as models or data objects at the orm level. An entity always has an Id that is unique to the system and it can always describe itself.</p>
+<h4 id="ids">Ids</h4>
+<p>The id of an entity must be unique across the system. In the following examples the convention {service_name}-{id} is used but this is just a suggestion</p>
+<h4 id="self-description">Self-description</h4>
+<p>At the very heart of entities is the ability to describe itself.</p>
+<pre><code>GET /entities/contacts
+</code></pre>
+
+<pre><code>{
+  &quot;TODO&quot;: &quot;Structure not complete&quot;,
+  &quot;fields&quot;: {
+    &quot;name&quot;: { &quot;type&quot;:&quot;string&quot; },
+    &quot;email&quot;: { &quot;type&quot;:&quot;string&quot; },
+    &quot;phone&quot;: { &quot;type&quot;:&quot;string&quot; },
+    &quot;next_of_kin&quot;: {
+      &quot;type&quot;: &quot;entity&quot;,
+      &quot;name&quot;: &quot;contacts&quot;
+    }
+  }
+}
+</code></pre>
+
+<p>Now let's look at this request which will put the last request to use</p>
+<pre><code>POST /id/contact-12345
+{
+  &quot;_fields_&quot;:[&quot;name&quot;, &quot;email&quot;, &quot;next_of_kin&quot;],
+  &quot;next_of_kin&quot;:{
+    &quot;_fields_&quot;:[&quot;name&quot;, &quot;phone&quot;]
+  }
+}
+</code></pre>
+
+<pre><code>{
+  &quot;id&quot;:&quot;contact-12345&quot;,
+  &quot;name&quot;:&quot;John Smith&quot;,
+  &quot;email&quot;:&quot;john.smith@example.com&quot;,
+  &quot;next_of_kin&quot;:{
+    &quot;id&quot;:&quot;contact-9876&quot;,
+    &quot;name&quot;:&quot;Jane Smith&quot;,
+    &quot;email&quot;:&quot;jane.smith@example.com&quot;
+  }
+}
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+        <script src="./js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 0.14.0
+Build Date UTC : 2015-10-05 11:17:45.040475
+-->
