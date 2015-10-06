@@ -1,40 +1,35 @@
-# L-Api
+# MAD Protocol Specification
 
 A specification for a well rounded web service.
 
+MAD Protocol stands for Model Action Documentation Protocol.
+
 ## Overview
 
-An l-api compliant web service provides a few key features that address the downsides of other alternatives such as REST, RPC and SOAP.
+An MAD compliant web service provides a few key features that address the downsides of other alternatives such as REST, RPC and SOAP.
 
  * documentation built in
- * entities separate from actions
+ * data separate from actions
  * a deep and flexible way of getting only the data we need
- * minimal cruft
+ * minimal cruft but still self contained
 
-The structure of an l-api web service is made up of two distinct parts, entities and actions.
+The structure of an MAD web service is made up of three distinct parts which are models, entities and actions. All of which have have documentation built in.
+
+## Models
+
+The model is has two key responsibilities.
+
+1. Entity creation
+2. Entity querying
+
+### Model Routes
 
 | Route                   | Method  | Description |
 | ------                  | -----   | ----------- |
-| /entities               | GET     | List the various entities available in the system |
-| /entities/{type}        | GET     | Describe the entity in detail. This will include field names, related entities and other info. |
-| /entities/{type}        | PUT     | Creates a new entity |
-| /entities/{type}        | POST    | Queries the data starting at the entity type |
-| /id/{id}                | GET     | This is the same as calling GET /entities/{type} |
-| /id/{id}                | POST    | Query the required fields and related entities |
-| /id/{id}                | PATCH   | Patch the data. If a field is not supplied it will not get updated |
-| /id/{id}                | UPDATE  | Update the data. The entity will be updated to the data passed in |
-| /id/{id}                | DELETE  | Deletes the entity |
-| /actions/               | GET     | Lists the services available |
-| /actions/{type}         | GET     | Gets the details of the actions available for the type |
-| /actions/{type}/{action}| POST    | Performs the action |
-
-## Entities
-
-Entities are best compared to the RESTful web services you're used to. They should be thought of as models or data objects at the orm level. An entity always has an Id that is unique to the system and it can always describe itself.
-
-
-#### Ids
-The id of an entity must be unique across the system. In the following examples the convention {service_name}-{id} is used but this is just a suggestion
+| /models               | GET     | List the various models available in the system |
+| /models/{type}        | GET     | Describe the model in detail. This will include field names, related models and other info. |
+| /models/{type}        | PUT     | Creates a new entity from a model |
+| /models/{type}        | POST    | Queries the data starting at the entity type |
 
 #### Self-description
 
@@ -50,16 +45,43 @@ GET /entities/contacts
     "email": { "type":"string" },
     "phone": { "type":"string" },
     "next_of_kin": {
-      "type": "entity",
+      "type": "model",
       "name": "contacts"
     }
   }
 }
 ```
 
-Now let's look at this request which will put the last request to use
+## Entities
+
+Where the model is the factory that finds and creates entities, the entity is simply an instance of that model.
+
+Each of the entities in a MAD web service must have a globally unique Id in the system. With this we have the ability to reference any entity with a single string.
+
+The entity is responsible for the following actions
+
+1. Read - TODO
+2. Update - TODO
+3. Patch - TODO
+4. Delete - TODO
+5. Describe - TODO
+
+### Entity Routes
+
+| Route                   | Method  | Description |
+| ------                  | -----   | ----------- |
+| /entity/{id}                | GET     | This is the same as calling GET /models/{type} |
+| /entity/{id}                | POST    | Query the required fields and related entities |
+| /entity/{id}                | PATCH   | Patch the data. If a field is not supplied it will not get updated |
+| /entity/{id}                | UPDATE  | Update the data. The entity will be updated to the data passed in |
+| /entity/{id}                | DELETE  | Deletes the entity |
+
+#### Ids
+The Id of an entity must be unique across the system. In the following examples the convention {service_name}-{id} is used but this is just a suggestion.
+
+
 ```
-POST /id/contact-12345
+POST /entity/contact-12345
 {
   "_fields_":["name", "email", "next_of_kin"],
   "next_of_kin":{
@@ -79,3 +101,13 @@ POST /id/contact-12345
   }
 }
 ```
+
+## Actions
+
+### Action Routes
+
+| Route                   | Method  | Description |
+| ------                  | -----   | ----------- |
+| /actions/               | GET     | Lists the services available |
+| /actions/{type}         | GET     | Gets the details of the actions available for the type |
+| /actions/{type}/{action}| POST    | Performs the action |
